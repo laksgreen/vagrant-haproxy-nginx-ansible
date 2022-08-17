@@ -1,0 +1,35 @@
+global_defs {
+        lvs_id haproxy
+}
+
+vrrp_script check_haproxy {
+        script "pidof haproxy"
+        interval 2
+        weight 2
+}
+
+# Virtual interface
+vrrp_instance VI_01 {
+        state {{ state }}
+        interface {{ interface }}
+        virtual_router_id {{ virtual_router_id }}
+        priority {{ priority }}
+        unicast_src_ip {{ unicast_src_ip }}
+        unicast_peer {
+                {{ unicast_peer }}
+        }
+
+        authentication {
+            auth_type PASS
+            auth_pass password
+        }
+
+        # The virtual ip address for Loadbalancers
+        virtual_ipaddress {
+                {{ virtual_ip_address }}
+        }
+
+        track_script {
+                check_haproxy
+        }
+}
